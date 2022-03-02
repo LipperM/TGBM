@@ -373,6 +373,9 @@
 					case 'batchapprove':
 
 						break;
+					case 'manualbuy':
+
+						break;
 				}
 
 				if (parameter.launchTime) {
@@ -415,6 +418,7 @@
 
 				switch (tempcmd) {
 					case 'getconfig':
+
 						this.$refs.baseConfigView.inval(data.data);
 						this.$refs.nomalConfigView.inval(data.data);
 
@@ -426,7 +430,9 @@
 						this.$refs.nomalConfigView.inval(data.data);
 						break;
 					case 'saveconfig':
-						this.upateConfig();
+						if (data.code.toUpperCase() == "SUCCESS") {
+							this.upateConfig();
+						}
 						this.noti('保存提示', data.code);
 						break;
 					case 'activeconfig':
@@ -450,6 +456,9 @@
 						break;
 					case 'batchapprove':
 						this.noti('批量授权', data.code);
+						break;
+					case 'manualbuy':
+						this.noti('手动买入', data.code);
 						break;
 
 				}

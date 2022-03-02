@@ -60,6 +60,11 @@
 			<el-button size="mini" type="infor" @click="excuteCmd('batchApprove')">批量授权</el-button>
 		</div>
 
+		<div class="tobuy">
+			<h4>手动买入</h4>
+			<el-button type="primary" @click="excuteCmd('manualBuy')">手动买入</el-button>
+		</div>
+
 
 		<el-dialog title="发送手续费" :visible.sync="centerDialogVisible" width="30%" center>
 			<el-input oninput="value=value.replace(/[^\d.]/g,'')" placeholder="请输入手续费" v-model="form.fee"></el-input>
@@ -191,6 +196,10 @@
 <style>
 	.config-content {
 		background-color: #c7cbd2;
+	}
+
+	.tobuy {
+		margin-top: 30px;
 	}
 
 	.open-switcher {

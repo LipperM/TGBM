@@ -1,7 +1,7 @@
 <template>
 	<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
 		<el-tab-pane label="基本配置" name="base"></el-tab-pane>
-		<el-tab-pane label="卖出配置" name="nomal"></el-tab-pane>
+		<el-tab-pane label="买卖配置" name="nomal"></el-tab-pane>
 	</el-tabs>
 </template>
 
