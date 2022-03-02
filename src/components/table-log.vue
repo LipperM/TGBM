@@ -17,7 +17,7 @@
 					<el-popover v-show="item.prop=='blockSeq'" trigger="hover" placement="top">
 						<p>{{ setTimeValue(scope.row.timestamp) }}</p>
 						<div slot="reference" class="name-wrapper">
-							<el-tag size="medium">{{scope.row[item.prop]}}</el-tag>
+							<el-tag @click="gourl(scope.row.txHash)" size="medium">{{scope.row[item.prop]}}</el-tag>
 						</div>
 					</el-popover>
 
@@ -95,6 +95,12 @@
 
 			inval() {
 				this.$forceUpdate();
+			},
+
+			gourl(index) {
+				if (index == null) return;
+				let url = 'https://bscscan.com/tx/{0}'.replace("{0}", index);
+				window.open(url, '_blank');
 			},
 
 			setFormat(value, prop) {

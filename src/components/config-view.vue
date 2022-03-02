@@ -61,7 +61,7 @@
 
 			<el-form-item label="买入滑点">
 				<el-col :span="24" class="layout-left padding-0">
-					<el-input oninput="value=value.replace(/[^\d.]/g,'')" placeholder="请输入买入滑点" v-model="form.slippage">
+					<el-input oninput="value=value.replace(/[^\d]/g,'')" placeholder="请输入买入滑点" maxlength=2 v-model="form.slippage">
 					</el-input>
 
 				</el-col>
@@ -108,7 +108,7 @@
 			</el-form-item>
 
 			<el-form-item label="指定区块" v-show="false">
-				<el-input placeholder="请输入指定区块" v-model="form.specialBlockNum"></el-input>
+				<el-input placeholder="请输入指定区块" oninput="value=value.replace(/[^\d]/g,'')" v-model="form.specialBlockNum"></el-input>
 			</el-form-item>
 
 			<el-form-item label="发射方式">
@@ -129,7 +129,7 @@
 				<el-col :span="24" class="layout-left padding-0">
 
 
-					<el-select v-model="form.delayType" placeholder="请选择延迟发射">
+					<el-select :clearable='true' v-model="form.delayType" placeholder="请选择延迟发射">
 						<el-option v-for="item in delayTypeValue" :key="item.value" :label="item.label"
 							:value="item.value">
 						</el-option>
@@ -138,11 +138,11 @@
 			</el-form-item>
 
 			<el-form-item label="延迟区块">
-				<el-input placeholder="请输入延迟区块数" v-model="form.delayBlockNum"></el-input>
+				<el-input placeholder="请输入延迟区块数"  oninput="value=value.replace(/[^\d]/g,'')" v-model="form.delayBlockNum"></el-input>
 			</el-form-item>
 
 			<el-form-item label="延迟时间">
-				<el-input placeholder="请输入延迟时间" v-model="form.delayTime"></el-input>
+				<el-input placeholder="请输入延迟时间" oninput="value=value.replace(/[^\d]/g,'')" v-model="form.delayTime"></el-input>
 			</el-form-item>
 
 			<el-form-item label="pinkSale">

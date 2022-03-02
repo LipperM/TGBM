@@ -1,28 +1,42 @@
 <template>
 
 	<div class="config-content">
+
+		<h4>自动卖出</h4>
 		<el-form ref="cnomal" :inline="false" :model="form" size="small" label-width="80px">
 
-
-			<el-form-item label="价格">
-
+			<el-form-item label="卖出价格">
 				<el-col :span="24" class="layout-left">
 					<el-input oninput="value=value.replace(/[^\d.]/g,'')" v-model="form.price"></el-input>
-					<el-tooltip class="item" effect="dark" content="自动卖出" placement="top">
-						<el-switch v-model="form.autoSell" @change="excuteCmd('sellConfig')">
-						</el-switch>
+				</el-col>
+			</el-form-item>
 
-					</el-tooltip>
+			<el-form-item label="卖出仓位">
+				<el-col :span="24" class="layout-left">
+					<el-input oninput="value=value.replace(/[^\d.]/g,'')" v-model="form.percent"></el-input>
 
 				</el-col>
 			</el-form-item>
 
+			<el-form-item>
+				<div :class="btclass" @click="openAuto">{{btlable}}</div>
+			</el-form-item>
+
+		</el-form>
+
+
+
+
+		<div>
+			<h4>手动卖出</h4>
+		</div>
+		<el-form ref="cnomal2" :inline="false" :model="form2" size="small" label-width="80px">
 
 
 			<el-form-item label="快速仓位">
 
 				<!-- <el-slider v-model="form.persent"></el-slider> -->
-				<el-radio-group v-model="form.manualSell" @change="setquick">
+				<el-radio-group v-model="form2.percent" @change="setquick">
 					<el-radio :label="25">25%</el-radio>
 					<el-radio :label="50">50%</el-radio>
 					<el-radio :label="75">75%</el-radio>
@@ -32,27 +46,9 @@
 
 			<el-form-item label="当前仓位">
 				<el-col :span="24" class="layout-left padding-0">
-					<el-input oninput="value=value.replace(/[^\d.]/g,'')" v-model="form.manualSell"></el-input>
+					<el-input oninput="value=value.replace(/[^\d.]/g,'')" v-model="form2.percent"></el-input>
 					<el-button type="warning" size="mini" @click="excuteCmd('manualSell')">手动卖出</el-button>
 				</el-col>
-			</el-form-item>
-
-
-			<el-form-item label="已有小号" v-show="false">
-
-				<el-col :span="24" class="layout-left padding-0">
-
-					<el-select v-model="select_childacc" multiple placeholder="选择小号">
-						<el-option v-for="item in child_acc" :key="item.value" :label="item.label" :value="item.value">
-						</el-option>
-					</el-select>
-				</el-col>
-			</el-form-item>
-
-
-			<el-form-item>
-
-
 			</el-form-item>
 
 
@@ -85,11 +81,18 @@
 				form: {
 					autoSell: false,
 					price: 0,
-					manualSell: 50, //手动卖出百分比
+					percent: 50,
 					fee: 0.05, //手续费
 				},
+
+				form2: {
+					percent: 50, //手动卖出百分比
+				},
+
 				totalNum: 0,
 				select_childacc: [],
+				btclass: 'open-switcher',
+				btlable: '立即开启',
 
 				child_acc: [{
 					value: 'acc1',
@@ -121,12 +124,21 @@
 				//this.$emit('submit', 'getSellConfig', this.form);
 			},
 
+
 			getWorkNum() {
 				this.$emit('submit', 'workerNum', this.form);
 			},
 
 			setquick(v) {
-				this.form.manualSell = v;
+				this.form2.percent = v;
+			},
+
+			openAuto() {
+				this.form.autoSell = !this.form.autoSell;
+				this.btclass = this.form.autoSell ? "open-switcher-active" : "open-switcher";
+				this.btlable = this.form.autoSell ? "点击关闭" : "立即开启";
+				this.excuteCmd('sellConfig');
+
 			},
 
 			excuteCmd(v) {
@@ -134,12 +146,20 @@
 				if (v == "sendFee") {
 					this.centerDialogVisible = false;
 				}
-				this.$emit('submit', v, this.form);
+
+				if (v == 'sellConfig') {
+					this.$emit('submit', v, this.form);
+				}
+
+				if (v == "manualSell") {
+					this.$emit('submit', v, this.form2);
+				}
+
 			},
 			inval(data) {
 				console.log(data);
 				let value = data.sellConfig;
-				
+
 				if (value) {
 					if (value.autoSell) {
 						this.form.autoSell = value.autoSell;
@@ -150,11 +170,17 @@
 					if (value.totalNum) {
 						this.totalNum = value.totalNum;
 					}
+					if (value.persent) {
+						this.from.persent = value.persent;
+					}
 				}
 
 				if (data.totalNum) {
 					this.totalNum = data.totalNum;
 				}
+
+				this.btclass = this.form.autoSell ? "open-switcher-active" : "open-switcher";
+				this.btlable = this.form.autoSell ? "点击关闭" : "立即开启";
 			}
 
 
@@ -165,5 +191,23 @@
 <style>
 	.config-content {
 		background-color: #c7cbd2;
+	}
+
+	.open-switcher {
+		background-color: #006DCC;
+		color: white;
+		cursor: pointer;
+	}
+
+	.open-switcher-active {
+		background-color: #9d9d9d;
+		color: white;
+		cursor: pointer;
+	}
+
+	h4 {
+		margin-top: 20px;
+		margin-bottom: 8px;
+		color: #409EFF;
 	}
 </style>
