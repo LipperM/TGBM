@@ -159,6 +159,10 @@
 				if (v == "manualSell") {
 					this.$emit('submit', v, this.form2);
 				}
+				
+				if (v == "manualBuy") {
+					this.$emit('submit', v, this.form2);
+				}
 
 			},
 			inval(data) {
