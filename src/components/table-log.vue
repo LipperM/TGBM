@@ -5,8 +5,8 @@
 		<el-table size="mini" :data="dataList" :height="height" :default-sort="sort" stripe style="width: 100%"
 			class="log-table">
 
-			<el-table-column :formatter="tableformat" align='center' :sortable='true' v-for="(item,index) in files"
-				:label="item.lable" :prop="item.prop">
+			<el-table-column :row-key="mkey" :formatter="tableformat" align='center' :sortable='true'
+				v-for="(item,index) in fields" :label="item.lable" :prop="item.prop">
 				<!-- 
 				<template slot-scope='scope'>
 					<span>{{scope.row.data}}</span>
@@ -17,12 +17,16 @@
 					<el-popover v-show="item.prop=='blockSeq'" trigger="hover" placement="top">
 						<p>{{ setTimeValue(scope.row.timestamp) }}</p>
 						<div slot="reference" class="name-wrapper">
-							<el-tag @click="gourl(scope.row.txHash)" size="medium">{{scope.row[item.prop]}}</el-tag>
+							<el-tag :class="item.prop" @click="gourl(scope.row.txHash,item.prop)" size="medium">
+								{{scope.row[item.prop]}}
+							</el-tag>
 						</div>
 					</el-popover>
 
-					<span v-show="item.prop != 'blockSeq'">{{setFormat(scope.row[item.prop],item.prop)}}</span>
-
+					<!-- <p v-show="item.prop != 'blockSeq'">{{setFormat(scope.row[item.prop],item.prop)}}</p> -->
+					<div :class="item.prop" @click="gourl(scope.row.txHash,item.prop)"
+						v-html="setFormat(scope.row[item.prop],item.prop)">
+					</div>
 				</template>
 
 			</el-table-column>
@@ -50,13 +54,19 @@
 					return "这是表格";
 				}
 			},
+			mkey: {
+				type: String,
+				default: function() {
+					return "blockSeq";
+				}
+			},
 			sort: {
 				type: Object,
 				default: function() {
 					return this.defsort;
 				}
 			},
-			files: {
+			fields: {
 				type: Array,
 				default: function() {
 					return [{
@@ -97,16 +107,24 @@
 				this.$forceUpdate();
 			},
 
-			gourl(index) {
+			gourl(index, prop) {
 				if (index == null) return;
-				let url = 'https://bscscan.com/tx/{0}'.replace("{0}", index);
-				window.open(url, '_blank');
+
+				if (prop == "txHash" || prop == 'blockSeq') {
+					let url = 'https://bscscan.com/tx/{0}'.replace("{0}", index);
+					window.open(url, '_blank');
+				}
+
 			},
 
 			setFormat(value, prop) {
 				if (value == 'buy') return "购买";
 				if (value == 'sell') return "出售";
-				// console.log(value);
+
+				if (prop == "txHash") return this.sublen(value, 0, 10);
+
+				if (prop == 'timestamp') return this.FomatTime(value);
+				value = String(value).replace(/,/g, "<br>");
 				return value;
 				//	return typeof value == 'object' ? JSON.stringify(value) : value;
 			},
@@ -135,6 +153,7 @@
 				if (daterc == 'buy') return "购买";
 				if (daterc == 'sell') return "出售";
 				if (prop == 'timestamp') return this.FomatTime(daterc);
+
 
 				return daterc;
 			}
@@ -166,5 +185,21 @@
 		color: #409EFF;
 		font-size: 24px;
 		font-weight: bold;
+	}
+
+	.txHash {
+		cursor: pointer;
+	}
+
+	.txHash :hover {
+		color: #006DCC !important;
+	}
+
+	.blockSeq {
+		cursor: pointer;
+	}
+
+	.blockSeq :hover {
+		color: #006DCC !important;
 	}
 </style>

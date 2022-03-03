@@ -42,3 +42,12 @@ Vue.prototype.FomatTime = function(timestamp) {
 
 	return year + '-' + month + '-' + date + ' ' + hours + ':' + minute + ':' + second
 }
+
+Vue.prototype.sublen = function(value, start, len, invert = false) {
+	if (typeof value == 'number') {
+		return value.toPrecision(len);
+	}
+	if (value.length <= len) return value;
+	if (!invert) return value.slice(start, start + len);
+	if (invert) return value.slice(value.length - (start + len), value.length - start);
+}

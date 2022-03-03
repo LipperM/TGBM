@@ -65,6 +65,15 @@
 			<el-button type="primary" @click="excuteCmd('manualBuy')">手动买入</el-button>
 		</div>
 
+		<div class="other">
+			<h4>其他配置</h4>
+			<el-row>
+				<el-button type="primary" @click="excuteCmd('startListen')">开启监听</el-button>
+				<el-button type="primary" @click="excuteCmd('stopListen')">停止监听</el-button>
+				<el-button type="primary" @click="excuteCmd('saveConfigOnChain')">配置上链</el-button>
+			</el-row>
+		</div>
+
 
 		<el-dialog title="发送手续费" :visible.sync="centerDialogVisible" width="30%" center>
 			<el-input oninput="value=value.replace(/[^\d.]/g,'')" placeholder="请输入手续费" v-model="form.fee"></el-input>
@@ -154,13 +163,7 @@
 
 				if (v == 'sellConfig') {
 					this.$emit('submit', v, this.form);
-				}
-
-				if (v == "manualSell") {
-					this.$emit('submit', v, this.form2);
-				}
-				
-				if (v == "manualBuy") {
+				}else{
 					this.$emit('submit', v, this.form2);
 				}
 

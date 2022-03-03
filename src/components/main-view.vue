@@ -18,7 +18,7 @@
 
 				<el-row>
 					<el-col :span="18" class="t1">
-						<TableLog ref='tabelT1' :sort="t1Sort" title="成交监控" :files="table1" :dataList="list1">
+						<TableLog ref='tabelT1' :sort="t1Sort" title="成交监控" :fields="table1" :dataList="list1">
 						</TableLog>
 					</el-col>
 
@@ -39,7 +39,7 @@
 					</el-col>
 				</el-row>
 
-				<!-- 	<el-row class="t1">
+				<!--<el-row class="t1">
 					<TableLog title="成交监控" :files="table1" :dataList="list1"></TableLog>
 				</el-row> -->
 
@@ -47,25 +47,19 @@
 				<el-row :gutter="10" class="t-d">
 
 					<el-col :span="12" class="t2">
-						<TableLog ref='tabelT2' title="代币监控" :sort="t2Sort" :files="table2" :dataList="list2">
+						<TableLog ref='tabelT2' title="代币监控" :sort="t2Sort" :fields="table2" :dataList="list2">
 						</TableLog>
 					</el-col>
 
 					<el-col :span="12" class="t3">
-						<TableLog ref='tabelT3' title="项目方监控" :files="table3" :dataList="list3"></TableLog>
+						<TableLog ref='tabelT3' title="项目方监控" mkey="timestamp" :fields="table3" :dataList="list3">
+						</TableLog>
 					</el-col>
 				</el-row>
 
-
-
 			</el-col>
 
-
-
-
 		</el-row>
-
-
 
 	</div>
 </template>
@@ -111,6 +105,11 @@
 					prop: 'blockSeq',
 					order: 'descending', //ascending   descending
 				},
+				
+				
+				table1Key: [],
+				table2Key: [],
+				table3Key: [],
 
 
 				table1: [{
@@ -164,15 +163,15 @@
 						lable: "时间"
 					},
 					{
-						prop: 'block',
-						lable: "block"
+						prop: 'txHash',
+						lable: "txHash"
 					},
 					{
 						prop: 'method',
 						lable: "method"
 					},
 					{
-						prop: 'value',
+						prop: 'params',
 						lable: "参数"
 					},
 				],
@@ -290,16 +289,35 @@
 				console.log(data);
 				switch (data.eventType) {
 					case "token":
-						this.list2.push(data);
+					
+						if (data.blockSeq && this.table2Key.indexOf(data.blockSeq) < 0) {
+							this.list2.push(data);
+							this.table2Key.push(data.blockSeq);
+						}
+						
 						this.currentPrice = data.price;
 						this.currentNPrice = data.priceReversed;
 						this.priceValue = this.priceType ? this.currentPrice : this.currentNPrice;
 						//	this.symbol=data
 						break;
+						
 					case 'trade':
-						this.list1.push(data);
+						if (data.blockSeq && this.table1Key.indexOf(data.blockSeq) < 0) {
+							this.list1.push(data);
+							this.table1Key.push(data.blockSeq);
+						}
+						
 						if (data.tokenBalance) this.currentTotle = data.tokenBalance;
 						//	this.symbol2=data
+						break;
+					case 'owner':
+
+						if (data.txHash && this.table3Key.indexOf(data.txHash) < 0) {
+							this.list3.push(data);
+							this.table3Key.push(data.txHash);
+						}
+
+
 						break;
 				}
 
@@ -376,16 +394,24 @@
 					case 'manualbuy':
 
 						break;
+					case 'startlisten':
+
+						break;
+					case 'stoplisten':
+
+						break;
+					case 'saveconfigonchain':
+
+						break;
 				}
 
 				if (parameter.launchTime) {
-					console.log(parameter.launchTime);
 					if (typeof(parameter.launchTime) != 'number') parameter.launchTime = Date.parse(parameter.launchTime);
-					console.log(parameter);
 				}
 
 				this.excuteCmd(this.host + type, type, parameter, this.responseCall);
 			},
+
 			excuteCmd(target, cmd, value, callback) {
 
 				var config = {
@@ -460,7 +486,18 @@
 					case 'manualbuy':
 						this.noti('手动买入', data.code);
 						break;
-
+					case 'startlisten':
+						this.noti('开启监听', data.code);
+						break;
+					case 'stoplisten':
+						this.noti('停止监听', data.code);
+						break;
+					case 'saveconfigonchain':
+						this.noti('配置上链', data.code);
+						break;
+					default:
+						this.noti('其他操作', data.code);
+						break;
 				}
 			},
 
